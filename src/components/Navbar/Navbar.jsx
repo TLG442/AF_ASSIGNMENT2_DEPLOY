@@ -1,7 +1,22 @@
 import React from "react";
 import Logo from "../../assets/logo.png";
-
+import {useNavigate} from 'react-router-dom'
+import {  doSignOut } from '../../firebase/auth'
 const Navbar = () => {
+
+  const navigate = useNavigate(); // Initialize navigate function
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Navigate to the /login route when the login button is clicked
+  };
+
+  const handleSignout = async(e) => {
+    e.preventDefault();
+
+    await doSignOut();
+  }
+
+
   return (
     <>
       <nav
@@ -11,7 +26,7 @@ const Navbar = () => {
         <div className="container">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4 text-white font-bold text-2xl">
-              <img src={Logo} alt="" className="w-10" />
+              
               <span>TLG-SPACE</span>
             </div>
             <div className="text-white hidden sm:block">
@@ -19,22 +34,19 @@ const Navbar = () => {
                 <li>
                   <a href="#">About</a>
                 </li>
-                <li>
-                  <a href="#">Technology</a>
-                </li>
-                <li>
-                  <a href="#">Galaxy</a>
-                </li>
-                <li>
-                  <a href="#">Satelite</a>
-                </li>
+              
               </ul>
             </div>
             <div>
-              <button className=" text-white border-2 border-white px-3 py-1 rounded-md">
-                Login
-              </button>
-            </div>
+  <button className="text-white border-2 border-white px-3 py-1 rounded-md mr-2" onClick={handleLoginClick}>
+    Login
+  </button>
+
+  <button className="text-white border-2 border-white px-3 py-1 rounded-md" onClick={handleSignout}>
+    Signout
+  </button>
+</div>
+
           </div>
         </div>
       </nav>

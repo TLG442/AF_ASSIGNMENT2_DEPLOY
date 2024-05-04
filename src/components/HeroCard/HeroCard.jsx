@@ -1,67 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import wave from "../../assets/wave Gif.gif";
-import { FaReact } from "react-icons/fa";
-import { FaShuttleSpace, FaSpaceAwesome } from "react-icons/fa6";
 
-const ServiceData = [
-  {
-    title: "HST",
-    content: "300-1500km",
-    description:
-      "Used for astronomical observations, capturing stunning images of the universe.",
-    icon: <FaReact className="text-7xl" />,
-    aosDelay: "300",
-  },
-  {
-    title: "ISS",
-    content: "500-1500km",
-    description:
-      ", it's a habitable artificial satellite orbiting Earth and serves as a space environment research laboratory",
-    icon: <FaShuttleSpace className="text-7xl" />,
-    aosDelay: "500",
-  },
-  {
-    title: "GPS",
-    content: "300-1500km",
-    description:
-      "Part of the Global Positioning System (GPS) used for navigation.",
-    icon: <FaSpaceAwesome className="text-7xl" />,
-    aosDelay: "700",
-  },
-];
 const HeroCard = () => {
+  const [apodData, setApodData] = useState([]);
+  const [selectedCamera, setSelectedCamera] = useState("NAVCAM");
+
+  useEffect(() => {
+    fetchApodData();
+  }, [selectedCamera]); // Fetch data whenever selectedCamera changes
+
+  const fetchApodData = () => {
+    fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=azrcPSop2fVRo8dUmVX7uwbWHAL2Qdu0xybgtiM7&camera=${selectedCamera}&page=1`)
+      .then((response) => response.json())
+      .then((data) => setApodData(data.photos))
+      .catch((error) => console.error("Error fetching APOD data: ", error));
+  };
+
+  const handleCameraChange = (event) => {
+    setSelectedCamera(event.target.value);
+  };
+
   return (
-    <>
-      <section className="bg-primary">
-        <div className="container">
-          <div className="min-h-[400px]">
-            <div>
-              <div className=" grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10 ">
-                {ServiceData.map((data, index) => {
-                  return (
-                    <div
-                      data-aos="fade-up"
-                      data-aos-delay={data.aosDelay}
-                      className="min-h-[180px] flex flex-col justify-center items-center rounded-xl gap-2 bg-sky-900/60 backdrop-blur-sm  text-white text-center text-2xl py-8 px-3 w-full lg:w-[300px] mx-auto"
-                    >
-                      {data.icon}
-                      <h1>{data.title}</h1>
-                      <p>{data.content}</p>
-                      <p className="text-sm">{data.description}</p>
-                    </div>
-                  );
-                })}
-              </div>
-              <img
-                src={wave}
-                alt=""
-                className="h-[200px] w-full  object-cover mix-blend-screen -translate-y-24 relative z-[0]"
-              />
-            </div>
-          </div>
+    <section className="bg-primary py-8 px-4">
+      <div className="container mx-auto">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-white mb-2">Mars Rover Images</h2>
+          <p className="text-lg text-gray-300">Select the camera:</p>
+          {/* Select statement to choose camera */}
+          <select
+            value={selectedCamera}
+            onChange={handleCameraChange}
+            className="mt-2 px-4 py-2 border border-gray-400 rounded-md bg-white text-gray-800 focus:outline-none focus:border-blue-500"
+          >
+            <option value="NAVCAM">NAVCAM</option>
+            <option value="FHAZ">FHAZ</option>
+            <option value="RHAZ">RHAZ</option>
+            <option value="MAST">MAST</option>
+            <option value="CHEMCAM">CHEMCAM</option>
+            <option value="MAHLI">MAHLI</option>
+            <option value="MARDI">MARDI</option>
+            <option value="PANCAM">PANCAM</option>
+            <option value="MINITES">MINITES</option>
+            {/* Add other camera options here */}
+          </select>
         </div>
-      </section>
-    </>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {apodData.map((data, index) => (
+            <div
+              key={index}
+              data-aos="fade-up"
+              data-aos-delay={index * 100}
+              className="bg-sky-900/60 backdrop-blur-sm rounded-lg overflow-hidden"
+            >
+              <img
+                key={index}
+                src={data.img_src}
+                alt={data.id}
+                className="w-full h-64 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-white mb-2">{data.rover.name}</h3>
+                <p className="text-gray-300">{data.earth_date}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <img
+        src={wave}
+        alt=""
+        className="h-[200px] w-full object-cover mix-blend-screen -translate-y-24"
+      />
+    </section>
   );
 };
 

@@ -1,8 +1,9 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import BrowserRouter, Routes, and Route
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero.jsx";
 import HeroCard from "./components/HeroCard/HeroCard.jsx";
-import BgVideo from "./assets/earth-bg.mp4";
+import BgVideo from "./assets/hill.mp4";
 import wave from "./assets/wave Gif.gif";
 import Rapidscat from "./components/Rapidscat/Rapidscat.jsx";
 import Satelite from "./components/Satelite/Satelite.jsx";
@@ -10,7 +11,11 @@ import Footer from "./components/Footer/Footer.jsx";
 import Footer5 from "./components/Footer/Footer5.jsx";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
+import Login from "./components/auth/login";
+import Register from "./components/auth/register";
+import Home from "./components/home";
+import { AuthProvider } from "./contexts/authContext";
+import MainContent from "./main-Content.jsx";
 const App = () => {
   React.useEffect(() => {
     AOS.init({
@@ -18,26 +23,23 @@ const App = () => {
       easing: "ease-in-out",
     });
   });
+
   return (
-    <div>
-      <div className="h-[700px] relative">
-        <video
-               autoPlay
-               loop
-             muted
-             className="fixed right-0 top-0 h-[700px] w-full object-cover z-[-1]"
-        >
-               <source src={BgVideo} type="video/mp4" />
-        </video>
-        <Navbar />
-        <Hero />
+    <Router> {/* Wrap your entire app with BrowserRouter */}
+      <div>
+      
+        
+        <AuthProvider>
+          {/* Define your routes using Routes and Route */}
+          <Routes>
+            <Route path="/" element={<MainContent />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/home" element={<Home />} />
+          </Routes>
+        </AuthProvider>
       </div>
-      <HeroCard />
-      <Rapidscat />
-      <Satelite />
-      {/* <Footer /> */}
-      <Footer5 />
-    </div>
+    </Router>
   );
 };
 
